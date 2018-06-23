@@ -54,6 +54,8 @@ export default class HTMLRenderer extends Component {
 					prev = index + 1;
 				});
 
+				ret += expression.slice(prev);
+
 				return `(${ret})`;
 			default:
 				return '"UNKNOWN_BLOCK"';
