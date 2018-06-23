@@ -71,11 +71,12 @@ $block-header-height: 16px;
 	position: relative;
 
 	input {
-		background-color: $black1;
 		border: none;
+		background-color: $black1;
 		font-size: inherit;
 		color: $white0;
 		width: 100%;
+		outline: none;
 		box-sizing: border-box;
 		margin-bottom: 5px;
 		font-family: $font;

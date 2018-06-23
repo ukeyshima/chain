@@ -1,11 +1,11 @@
 import { Record, List, Map } from 'immutable';
 import _ from 'lodash';
-import { BLOCK, PIN } from '../constants';
+import { BLOCK, PIN, EMPTY_HANDWRITING } from '../constants';
 import vars from '../shared/vars.scss';
 
 const { white0, purple0, blue1, yellow0 } = vars;
 
-export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: true, editable: true, type: '', color: white0, changeable: true, outputPins: List(), inputPins: List(), height: 70, handwriting: { args: [], expression: '' } }) {
+export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: true, editable: true, type: '', color: white0, changeable: true, outputPins: List(), inputPins: List(), height: 70, handwriting: EMPTY_HANDWRITING }) {
 	constructor(args) {
 		super(args);
 
@@ -66,12 +66,13 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 
 	recalculateHeight() {
 		const { type, inputPins: { size: size0 }, outputPins: { size: size1 } } = this;
+		let h = Math.max(4, size0 + 2, size1 + 2) * (PIN.RADIUS * 2 + 3) - 1;
 
-		if (type === BLOCK.TYPE_MATH) {
-			return this;
+		if (type !== BLOCK.TYPE_VIEW) {
+			h = Math.max(200, h);
 		}
 
-		return this.set('height', Math.max(4, size0 + 2, size1 + 2) * (PIN.RADIUS * 2 + 3) - 1);
+		return this.set('height', h);
 	}
 
 	/**

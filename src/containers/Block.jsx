@@ -25,14 +25,15 @@ export default class Block extends Component {
 
 	componentDidMount() {
 		const { props: { model } } = this;
+		const type = model.get('type');
 
-		if (model.get('type') === BLOCK.TYPE_MATH) {
+		if (type !== BLOCK.TYPE_VIEW) {
 			const $editor = findDOMNode(this).querySelector('[data-handwriting]');
 
 			$editor.addEventListener('exported', this.onExported);
 			MyScript.register($editor, {
 				recognitionParams: {
-					type: 'MATH',
+					type: type === BLOCK.TYPE_MATH || type === BLOCK.TYPE_VALUE || type === BLOCK.TYPE_OPERATOR ? 'MATH' : 'TEXT',
 					apiVersion: 'V4',
 					server: {
 						applicationKey: '331b4bdf-7ace-4265-94f1-b01504c78743',
@@ -75,9 +76,11 @@ export default class Block extends Component {
 	 */
 	@autobind
 	onChange(e) {
-		const { props: { model, dispatch } } = this;
+		const { props: { model, dispatch }, _editor } = this;
+		const { currentTarget: { value } } = e;
 
-		dispatch(actions.updateBlock(model.get('id'), { value: e.currentTarget.value }));
+		dispatch(actions.updateBlock(model.get('id'), { value }));
+		_editor.clear();
 	}
 
 	@autobind
@@ -168,8 +171,8 @@ export default class Block extends Component {
 		const color = model.get('color');
 		const type = model.get('type');
 
-		if (type === BLOCK.TYPE_MATH) {
-			const { flattenArgs, expression } = model.get('handwriting');
+		if (type !== BLOCK.TYPE_VIEW) {
+			const { flattenArgs } = model.get('handwriting');
 
 			return (
 				<div data-draggable styleName='base' onMouseDown={this.onMouseDownOrTouchStart} onTouchStart={this.onMouseDownOrTouchStart} style={{
@@ -180,11 +183,13 @@ export default class Block extends Component {
 				}}
 				>
 					<div data-draggable>
-						<button styleName='red' onClick={this.onClickDeleteButton}>x</button>
+						{model.get('deletable') ? <button styleName='red' onClick={this.onClickDeleteButton}>x</button> : null}
+						{model.get('changeable') ? <button onClick={this.addPin}>+</button> : null}
+						{model.get('changeable') ? <button onClick={this.deletePin}>-</button> : null}
 						<button onClick={this.clearMathEditor}>Clear</button>
 					</div>
 					<div data-draggable styleName='math-div'>
-						<input type='text' readOnly value={expression} />
+						<input type='text' readOnly={!model.get('editable')} value={model.get('value')} onChange={this.onChange} style={{ borderLeft: `5px solid ${color}` }} />
 						{
 							_.map(flattenArgs, (arg, i) => {
 
