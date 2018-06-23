@@ -14,12 +14,10 @@ const findArgs = (str) => {
 		const c = str[i + 1] || '';
 
 		if (!/\.|[A-Za-z]/.test(a) && /[A-Za-z]/.test(b) && !/\.|[A-Za-z]/.test(c)) {
-			if (!_.some(args, ({ char }) => char === b)) {
-				args.push({
-					index: i,
-					char: b
-				});
-			}
+			args.push({
+				index: i,
+				char: b
+			});
 		}
 	}
 
@@ -362,9 +360,20 @@ var latex_to_js = function (input) {
 
 export default (input) => {
 	const js = latex_to_js(input);
+	const args = findArgs(js);
+	const flattenArgs = [];
+
+	_.forEach(args, ({ char }) => {
+		if (_.includes(flattenArgs, char)) {
+			return;
+		}
+
+		flattenArgs.push(char);
+	});
 
 	return {
 		expression: js,
-		args: findArgs(js)
+		args: args,
+		flattenArgs
 	};
 };

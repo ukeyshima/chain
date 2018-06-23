@@ -57,7 +57,7 @@ export default handleActions({
 	[actions.updateHandwriting]: (state, action) => {
 		const { payload: { id, handwriting } } = action;
 		const index = state.findIndex((a) => a.get('id') === id);
-		const { args: { length } } = handwriting;
+		const { flattenArgs: { length } } = handwriting;
 
 		return state.update(index, (block) => {
 			block = block.updateIn(['inputPins'], (pins) => pins.clear());

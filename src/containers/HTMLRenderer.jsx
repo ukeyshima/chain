@@ -44,12 +44,12 @@ export default class HTMLRenderer extends Component {
 			case BLOCK.TYPE_OPERATOR:
 				return `(${args[0]}${block.get('value')}${args[1]})`;
 			case BLOCK.TYPE_MATH:
-				const { expression, args: hargs } = block.get('handwriting');
+				const { expression, args: hargs, flattenArgs } = block.get('handwriting');
 				let ret = '';
 				let prev = 0;
 
-				_.forEach(hargs, ({ index }, i) => {
-					ret += expression.substring(prev, index) + args[i];
+				_.forEach(hargs, ({ char, index }) => {
+					ret += expression.substring(prev, index) + args[_.indexOf(flattenArgs, char)];
 
 					prev = index + 1;
 				});

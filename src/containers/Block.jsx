@@ -157,7 +157,7 @@ export default class Block extends Component {
 		const type = model.get('type');
 
 		if (type === BLOCK.TYPE_MATH) {
-			const { args } = model.get('handwriting');
+			const { flattenArgs } = model.get('handwriting');
 
 			return (
 				<div data-draggable styleName='base' onMouseDown={this.onMouseDownOrTouchStart} onTouchStart={this.onMouseDownOrTouchStart} style={{
@@ -172,10 +172,11 @@ export default class Block extends Component {
 					</div>
 					<div data-draggable styleName='textarea-div'>
 						{
-							_.map(args, ({ char }, i) => {
+							_.map(flattenArgs, (arg, i) => {
+	
 								return (
 									<div styleName='math-arg' key={i} style={{ top: (PIN.WIDTH) * 2 * i + 6 }}>
-										{char}
+										{arg}
 									</div>
 								);
 							})
