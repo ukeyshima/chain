@@ -20,6 +20,7 @@ export default class Block extends Component {
 
 		this.prevX = 0;
 		this.prevY = 0;
+		this._editor = null;
 	}
 
 	componentDidMount() {
@@ -44,18 +45,29 @@ export default class Block extends Component {
 					}
 				}
 			});
+
+			const { editor } = $editor;
+
+			this._editor = editor;
 		}
 	}
 
 	@autobind
 	onExported(e) {
 		const { props: { model, dispatch } } = this;
-		const { detail: { exports: { 'application/x-latex': handwriting } } } = e;
+		const { detail: { exports } } = e;
 
 		dispatch(actions.updateHandwriting({
 			id: model.get('id'),
-			handwriting: latex2js(handwriting)
+			handwriting: latex2js(exports === undefined ? '' : exports['application/x-latex'])
 		}));
+	}
+
+	@autobind
+	clearMathEditor() {
+		const { _editor } = this;
+
+		_editor.clear();
 	}
 
 	/**
@@ -157,7 +169,7 @@ export default class Block extends Component {
 		const type = model.get('type');
 
 		if (type === BLOCK.TYPE_MATH) {
-			const { flattenArgs } = model.get('handwriting');
+			const { flattenArgs, expression } = model.get('handwriting');
 
 			return (
 				<div data-draggable styleName='base' onMouseDown={this.onMouseDownOrTouchStart} onTouchStart={this.onMouseDownOrTouchStart} style={{
@@ -168,12 +180,14 @@ export default class Block extends Component {
 				}}
 				>
 					<div data-draggable>
-						{model.get('deletable') ? <button styleName='red' onClick={this.onClickDeleteButton}>x</button> : null}
+						<button styleName='red' onClick={this.onClickDeleteButton}>x</button>
+						<button onClick={this.clearMathEditor}>Clear</button>
 					</div>
-					<div data-draggable styleName='textarea-div'>
+					<div data-draggable styleName='math-div'>
+						<input type='text' readOnly value={expression} />
 						{
 							_.map(flattenArgs, (arg, i) => {
-	
+
 								return (
 									<div styleName='math-arg' key={i} style={{ top: (PIN.WIDTH) * 2 * i + 6 }}>
 										{arg}

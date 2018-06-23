@@ -51,12 +51,9 @@ $block-header-height: 16px;
 }
 
 .math {
-	$m: 19px;
-
 	background-color: $black1;
-	height: 100%;
-	margin-left: $m;
-	width: calc(100% - #{$m});
+	height: calc(100% - 21px);
+	width: 100%;
 }
 
 .math-arg {
@@ -72,6 +69,23 @@ $block-header-height: 16px;
 	padding: 5px;
 	box-sizing: border-box;
 	position: relative;
+
+	input {
+		background-color: $black1;
+		border: none;
+		font-size: inherit;
+		color: $white0;
+		width: 100%;
+		box-sizing: border-box;
+		margin-bottom: 5px;
+		font-family: $font;
+	}
+}
+
+.math-div {
+	@extend .textarea-div;
+
+	padding-left: 24px;
 }
 
 .red {
