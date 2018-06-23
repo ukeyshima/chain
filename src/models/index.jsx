@@ -5,7 +5,7 @@ import vars from '../shared/vars.scss';
 
 const { white0, purple0, blue1, yellow0 } = vars;
 
-export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: true, editable: true, type: '', color: white0, changeable: true, outputPins: List(), inputPins: List(), height: 70, fixedSize: false, handwriting: '' }) {
+export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: true, editable: true, type: '', color: white0, changeable: true, outputPins: List(), inputPins: List(), height: 70, handwriting: { args: [], expression: '' } }) {
 	constructor(args) {
 		super(args);
 
@@ -54,7 +54,6 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 					changeable: false,
 					editable: false,
 					outputPins: this._createPins([white0], PIN.TYPE_OUTPUT),
-					fixedSize: true,
 					height: 200
 				};
 				break;
@@ -66,9 +65,9 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 	}
 
 	recalculateHeight() {
-		const { fixedSize, inputPins: { size: size0 }, outputPins: { size: size1 } } = this;
+		const { type, inputPins: { size: size0 }, outputPins: { size: size1 } } = this;
 
-		if (fixedSize) {
+		if (type === BLOCK.TYPE_MATH) {
 			return this;
 		}
 

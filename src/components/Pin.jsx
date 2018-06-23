@@ -96,8 +96,8 @@ export default class Pin extends Component {
 					position: 'absolute',
 					left: model.get('cx') - deltaPosition,
 					top: model.get('cy') - deltaPosition,
-					width: PIN.RADIUS * 2 + 2,
-					height: PIN.RADIUS * 2 + 2,
+					width: PIN.WIDTH * 2,
+					height: PIN.WIDTH * 2,
 					cursor: 'pointer'
 				}}
 			>

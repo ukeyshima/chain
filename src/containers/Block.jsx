@@ -174,11 +174,7 @@ export default class Block extends Component {
 						{
 							_.map(args, ({ char }, i) => {
 								return (
-									<div styleName='math-arg' key={i} style={{
-										left: 2,
-										top: (PIN.RADIUS + 1) * 2 * i + 5 + 1
-									}}
-									>
+									<div styleName='math-arg' key={i} style={{ top: (PIN.WIDTH) * 2 * i + 6 }}>
 										{char}
 									</div>
 								);
