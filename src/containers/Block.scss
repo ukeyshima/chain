@@ -50,12 +50,46 @@ $block-header-height: 16px;
 	}
 }
 
+.math {
+	$m: 19px;
+
+	background-color: $black1;
+	height: 100%;
+	margin-left: $m;
+	width: calc(100% - #{$m});
+}
+
+.math-arg {
+	position: absolute;
+	background-color: $black1;
+	width: 20px;
+	text-align: center;
+}
+
 .textarea-div {
 	height: calc(100% - #{$block-header-height});
 	padding: 5px;
 	box-sizing: border-box;
+	position: relative;
 }
 
 .red {
 	background-color: $red0 !important;
+}
+
+:global .ms-editor .loader {
+	width: 100px !important;
+	height: 100px !important;
+	top: calc(50% - 65px) !important;
+	left: calc(50% - 65px) !important;
+}
+
+:global #pendingStrokes {
+	* {
+		color: red !important;
+	}
+}
+
+:global #MODEL-viewTransform {
+	stroke: $white0;
 }

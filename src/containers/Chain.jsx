@@ -43,15 +43,6 @@ export default class Chain extends Component {
 		window.addEventListener('message', this.onMessage);
 	}
 
-	componentWillReceiveProps(nextProps) {
-		const { blocks, links } = nextProps;
-
-		localStorage.setItem('storedState', JSON.stringify({
-			blocks: blocks.toJS(),
-			links: links.toJS()
-		}));
-	}
-
 	componentWillUnmount() {
 		window.removeEventListener('message', this.onMessage);
 	}

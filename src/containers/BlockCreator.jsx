@@ -9,8 +9,8 @@ import autobind from 'autobind-decorator';
 import IndentTextarea from '../components/IndentTextarea';
 import './BlockCreator.scss';
 
-const OPTION_LIST = [BLOCK.TYPE_VALUE, BLOCK.TYPE_FUNCTION, BLOCK.TYPE_PROPERTY, BLOCK.TYPE_OPERATOR];
-const PASCAL_OPTION_LIST = _.map(OPTION_LIST, (a) => _.upperFirst((_.camelCase(a))));
+const OPTION_LIST = [BLOCK.TYPE_VALUE, BLOCK.TYPE_FUNCTION, BLOCK.TYPE_PROPERTY, BLOCK.TYPE_OPERATOR, BLOCK.TYPE_MATH];
+const PASCAL_OPTION_LIST = _.map(OPTION_LIST, (a) => _.upperFirst((_.camelCase(a.toString()))));
 
 @connect()
 export default class BlockCreator extends Component {

@@ -53,5 +53,20 @@ export default handleActions({
 			const value = block.get('value');
 			return block.set('value', value ? `${value}\n${payload}` : payload);
 		});
+	},
+	[actions.updateHandwriting]: (state, action) => {
+		const { payload: { id, handwriting } } = action;
+		const index = state.findIndex((a) => a.get('id') === id);
+		const { args: { length } } = handwriting;
+
+		return state.update(index, (block) => {
+			block = block.updateIn(['inputPins'], (pins) => pins.clear());
+
+			for (let i = 0; i < length; i += 1) {
+				block = block.updateIn(['inputPins'], (pins) => pins.push(block.createPin(white0, PIN.TYPE_INPUT)));
+			}
+
+			return block.set('handwriting', handwriting);
+		});
 	}
 }, List());

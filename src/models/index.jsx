@@ -5,7 +5,7 @@ import vars from '../shared/vars.scss';
 
 const { white0, purple0, blue1, yellow0 } = vars;
 
-export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: true, editable: true, type: '', color: white0, changeable: true, outputPins: List(), inputPins: List(), height: 70 }) {
+export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: true, editable: true, type: '', color: white0, changeable: true, outputPins: List(), inputPins: List(), height: 70, fixedSize: false, handwriting: '' }) {
 	constructor(args) {
 		super(args);
 
@@ -49,6 +49,15 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 					outputPins: this._createPins([white0], PIN.TYPE_OUTPUT)
 				};
 				break;
+			case BLOCK.TYPE_MATH:
+				options = {
+					changeable: false,
+					editable: false,
+					outputPins: this._createPins([white0], PIN.TYPE_OUTPUT),
+					fixedSize: true,
+					height: 200
+				};
+				break;
 			default:
 				throw new Error(`Unknown type: ${type}.`);
 		}
@@ -57,9 +66,13 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 	}
 
 	recalculateHeight() {
-		const { inputPins: { size: size0 }, outputPins: { size: size1 } } = this;
+		const { fixedSize, inputPins: { size: size0 }, outputPins: { size: size1 } } = this;
 
-		return this.set('height', Math.max(4, size0 + 1, size1 + 1) * (PIN.RADIUS * 2 + 3) - 1);
+		if (fixedSize) {
+			return this;
+		}
+
+		return this.set('height', Math.max(4, size0 + 2, size1 + 2) * (PIN.RADIUS * 2 + 3) - 1);
 	}
 
 	/**
@@ -122,7 +135,7 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 	static _pinPosition(index, direction) {
 		return [
 			direction === PIN.TYPE_INPUT ? -PIN.RADIUS - 2 : direction === PIN.TYPE_OUTPUT ? BLOCK.WIDTH + PIN.RADIUS : 0,
-			PIN.RADIUS + (PIN.RADIUS * 2 + 3) * index + 1
+			21 + PIN.RADIUS + (PIN.RADIUS * 2 + 3) * index + 1
 		];
 	}
 }

@@ -43,6 +43,18 @@ export default class HTMLRenderer extends Component {
 				return `${args[0]}[${JSON.stringify(block.get('value'))}]`;
 			case BLOCK.TYPE_OPERATOR:
 				return `(${args[0]}${block.get('value')}${args[1]})`;
+			case BLOCK.TYPE_MATH:
+				const { expression, args: hargs } = block.get('handwriting');
+				let ret = '';
+				let prev = 0;
+
+				_.forEach(hargs, ({ index }, i) => {
+					ret += expression.substring(prev, index) + args[i];
+
+					prev = index + 1;
+				});
+
+				return `(${ret})`;
 			default:
 				return '"UNKNOWN_BLOCK"';
 		}

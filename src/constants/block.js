@@ -8,3 +8,4 @@ export const TYPE_FUNCTION = 'FUNCTION_BLOCK';
 export const TYPE_PROPERTY = 'PROPERTY_BLOCK';
 export const TYPE_OPERATOR = 'OPERATOR_BLCOK';
 export const TYPE_VIEW = 'VIEW_BLOCK';
+export const TYPE_MATH = 'MATH_BLOCK';
