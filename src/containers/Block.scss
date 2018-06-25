@@ -12,9 +12,9 @@ $block-header-height: 16px;
 	background-color: $black0;
 	box-sizing: border-box;
 	font-family: $font;
-	width: $block-width;
 	display: flex;
 	flex-direction: column;
+	position: relative;
 
 	button {
 		display: inline-block;
@@ -42,7 +42,7 @@ $block-header-height: 16px;
 		color: inherit;
 		height: 100%;
 		box-sizing: border-box;
-		resize: vertical;
+		resize: none;
 		outline: none;
 		display: block;
 		user-select: none;
@@ -50,12 +50,73 @@ $block-header-height: 16px;
 	}
 }
 
+.math {
+	background-color: $black1;
+	height: calc(100% - 23px);
+	width: 100%;
+}
+
+.math-arg {
+	position: absolute;
+	background-color: $black1;
+	width: 20px;
+	left: 2px;
+	text-align: center;
+}
+
 .textarea-div {
 	height: calc(100% - #{$block-header-height});
 	padding: 5px;
 	box-sizing: border-box;
+	position: relative;
+
+	input {
+		border: none;
+		background-color: $black1;
+		font-size: inherit;
+		color: $white0;
+		width: 100%;
+		outline: none;
+		box-sizing: border-box;
+		margin-bottom: 5px;
+		font-family: $font;
+		padding: 2px;
+	}
+}
+
+.math-div {
+	@extend .textarea-div;
+
+	padding-left: 24px;
 }
 
 .red {
 	background-color: $red0 !important;
+}
+
+.resizer {
+	background-color: transparent;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 5px;
+	height: 5px;
+	cursor: nwse-resize;
+}
+
+:global .ms-editor .loader {
+	width: 100px !important;
+	height: 100px !important;
+	top: calc(50% - 65px) !important;
+	left: calc(50% - 65px) !important;
+}
+
+:global #pendingStrokes {
+	* {
+		color: red !important;
+	}
+}
+
+:global #MODEL-viewTransform {
+	stroke: $white0;
 }

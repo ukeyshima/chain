@@ -8,7 +8,6 @@ $blue0: rgb(0, 122, 204);
 $blue1: rgb(86, 156, 214);
 $blue2: rgb(156, 220, 254);
 $yellow0: rgb(220, 220, 170);
-$block-width: 200px;
 $footer-height: 36px;
 
 @value black0 #{$black0};
@@ -20,4 +19,3 @@ $footer-height: 36px;
 @value blue1 #{$blue1};
 @value blue2 #{$blue2};
 @value yellow0 #{$yellow0};
-@value blockWidth #{$block-width};

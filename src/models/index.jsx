@@ -1,11 +1,28 @@
 import { Record, List, Map } from 'immutable';
 import _ from 'lodash';
-import { BLOCK, PIN } from '../constants';
+import { BLOCK, PIN, EMPTY_HANDWRITING } from '../constants';
 import vars from '../shared/vars.scss';
 
 const { white0, purple0, blue1, yellow0 } = vars;
 
-export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: true, editable: true, type: '', color: white0, changeable: true, outputPins: List(), inputPins: List(), height: 70 }) {
+const MIN_HEIGHT_OTHER_THAN_VIEW = 200;
+
+export class Block extends Record({
+	id: 0,
+	value: '',
+	x: 0,
+	y: 0,
+	width: BLOCK.WIDTH,
+	height: BLOCK.HEIGHT,
+	deletable: true,
+	editable: true,
+	type: '',
+	color: white0,
+	changeable: true,
+	outputPins: List(),
+	inputPins: List(),
+	handwriting: EMPTY_HANDWRITING
+}) {
 	constructor(args) {
 		super(args);
 
@@ -49,6 +66,13 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 					outputPins: this._createPins([white0], PIN.TYPE_OUTPUT)
 				};
 				break;
+			case BLOCK.TYPE_MATH:
+				options = {
+					changeable: false,
+					editable: false,
+					outputPins: this._createPins([white0], PIN.TYPE_OUTPUT)
+				};
+				break;
 			default:
 				throw new Error(`Unknown type: ${type}.`);
 		}
@@ -57,9 +81,29 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 	}
 
 	recalculateHeight() {
-		const { inputPins: { size: size0 }, outputPins: { size: size1 } } = this;
+		const { type, height, inputPins: { size: size0 }, outputPins: { size: size1 } } = this;
+		let h = Math.max(height, Math.max(4, size0 + 2, size1 + 2) * (PIN.WIDTH * 2 + 1) - 1);
 
-		return this.set('height', Math.max(4, size0 + 1, size1 + 1) * (PIN.RADIUS * 2 + 3) - 1);
+		if (type !== BLOCK.TYPE_VIEW) {
+			h = Math.max(MIN_HEIGHT_OTHER_THAN_VIEW, h);
+		}
+
+		return this.set('height', h);
+	}
+
+	recalculatePinPosition() {
+		const { inputPins, outputPins, x, y } = this;
+
+		return this.merge({
+			inputPins: inputPins.map((a, i) => {
+				const [cx, cy] = this._pinPosition(i, PIN.TYPE_INPUT);
+				return a.merge({ cx: x + cx, cy: y + cy });
+			}),
+			outputPins: outputPins.map((a, i) => {
+				const [cx, cy] = this._pinPosition(i, PIN.TYPE_OUTPUT);
+				return a.merge({ cx: x + cx, cy: y + cy });
+			})
+		});
 	}
 
 	/**
@@ -78,6 +122,19 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 	}
 
 	/**
+	 * @param {number} dw
+	 * @param {number} dh
+	 */
+	dresize(dw, dh) {
+		const { type, width, height } = this;
+
+		return this.merge({
+			width: Math.max(BLOCK.WIDTH, width + dw),
+			height: Math.max(type !== BLOCK.TYPE_VIEW ? MIN_HEIGHT_OTHER_THAN_VIEW : BLOCK.HEIGHT, height + dh)
+		}).recalculatePinPosition();
+	}
+
+	/**
 	 * @param {string} color
 	 * @param {string} type
 	 * @param {number} pindex
@@ -87,7 +144,7 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 		const key = Block.convertPinTypeToPinKey(type);
 		const { size } = this.get(key);
 		const index = _.isNull(pindex) ? size : pindex;
-		const [cx, cy] = Block._pinPosition(index, type);
+		const [cx, cy] = this._pinPosition(index, type);
 
 		return new Pin({ index, color, type, cx: x + cx, cy: y + cy });
 	}
@@ -102,6 +159,19 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 	}
 
 	/**
+	 * @param {number} index 
+	 * @param {string} direction 
+	 */
+	_pinPosition(index, direction) {
+		const { width } = this;
+
+		return [
+			direction === PIN.TYPE_INPUT ? -PIN.RADIUS - 2 : direction === PIN.TYPE_OUTPUT ? width + PIN.RADIUS : 0,
+			21 + PIN.RADIUS + (PIN.WIDTH * 2 + 1) * index + 1
+		];
+	}
+
+	/**
 	 * @param {string} type
 	 */
 	static convertPinTypeToPinKey(type) {
@@ -113,17 +183,6 @@ export class Block extends Record({ id: 0, value: '', x: 0, y: 0, deletable: tru
 			default:
 				throw new Error('Unknown pin type');
 		}
-	}
-
-	/**
-	 * @param {number} index 
-	 * @param {string} direction 
-	 */
-	static _pinPosition(index, direction) {
-		return [
-			direction === PIN.TYPE_INPUT ? -PIN.RADIUS - 2 : direction === PIN.TYPE_OUTPUT ? BLOCK.WIDTH + PIN.RADIUS : 0,
-			PIN.RADIUS + (PIN.RADIUS * 2 + 3) * index + 1
-		];
 	}
 }
 
