@@ -62,7 +62,7 @@ export default class Block extends Component {
 		if (_canClearMathEditor) {
 			dispatch(actions.updateHandwriting({
 				id: model.get('id'),
-				handwriting: latex2js(exports === undefined ? '' : exports['application/x-latex'])
+				handwriting: latex2js(exports === undefined ? '' : exports['application/x-latex'] || exports['text/plain'])
 			}));
 		}
 		this._canClearMathEditor = true;

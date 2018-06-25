@@ -52,7 +52,7 @@ $block-header-height: 16px;
 
 .math {
 	background-color: $black1;
-	height: calc(100% - #{$block-header-height} - 5px);
+	height: calc(100% - 23px);
 	width: 100%;
 }
 
@@ -80,6 +80,7 @@ $block-header-height: 16px;
 		box-sizing: border-box;
 		margin-bottom: 5px;
 		font-family: $font;
+		padding: 2px;
 	}
 }
 
