@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
 import actions from '../actions';
 import autobind from 'autobind-decorator';
@@ -57,7 +56,7 @@ export default class Block extends Component {
 	onExported(e) {
 		const { props: { model, dispatch }, _canClearMathEditor } = this;
 		const { detail: { exports } } = e;
-		
+
 		if (_canClearMathEditor) {
 			dispatch(actions.updateHandwriting({
 				id: model.get('id'),
