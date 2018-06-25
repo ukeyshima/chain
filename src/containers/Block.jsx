@@ -9,6 +9,8 @@ import { BLOCK, PIN } from '../constants';
 import _ from 'lodash';
 import MyScript from 'myscript/dist/myscript.min.js';
 import latex2js from '../latex2js';
+import Undo from 'react-icons/lib/fa/mail-reply';
+import Redo from 'react-icons/lib/fa/mail-forward';
 import './Block.scss';
 
 window.ontouchmove = () => { };
@@ -244,9 +246,15 @@ export default class Block extends Component {
 						{model.get('deletable') ? <button styleName='red' onClick={this.onClickDeleteButton}>x</button> : null}
 						{model.get('changeable') ? <button onClick={this.addPin}>+</button> : null}
 						{model.get('changeable') ? <button onClick={this.deletePin}>-</button> : null}
-						<button onClick={this.clearMathEditor}>Clear</button>
-						<button onClick={this.undoMathEditor}>Undo</button>
-						<button onClick={this.redoMathEditor}>Redo</button>
+						<button onClick={this.clearMathEditor}>
+							Clear
+						</button>
+						<button onClick={this.undoMathEditor}>
+							<Undo />
+						</button>
+						<button onClick={this.redoMathEditor}>
+							<Redo />
+						</button>
 					</div>
 					<div data-draggable styleName='math-div'>
 						<input type='text' readOnly={!model.get('editable')} value={model.get('value')} onChange={this.onChange} style={{ borderLeft: `5px solid ${color}` }} />
