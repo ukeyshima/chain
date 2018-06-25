@@ -10,7 +10,7 @@ import IndentTextarea from '../components/IndentTextarea';
 import './BlockCreator.scss';
 
 const OPTION_LIST = [BLOCK.TYPE_VALUE, BLOCK.TYPE_FUNCTION, BLOCK.TYPE_PROPERTY, BLOCK.TYPE_OPERATOR, BLOCK.TYPE_MATH];
-const PASCAL_OPTION_LIST = _.map(OPTION_LIST, (a) => _.upperFirst((_.camelCase(a.toString()))));
+const OPTION_NAME_LIST = _.map(OPTION_LIST, (a) => `${_.capitalize(a)} Block`);
 
 @connect()
 export default class BlockCreator extends Component {
@@ -100,7 +100,7 @@ export default class BlockCreator extends Component {
 			}}
 			>
 				<select value={model.get('selected')} onChange={this.onChangeSelect}>
-					{_.map(OPTION_LIST, (a, i) => <option value={a} key={i}>{PASCAL_OPTION_LIST[i]}</option>)}
+					{_.map(OPTION_LIST, (a, i) => <option value={a} key={i}>{OPTION_NAME_LIST[i]}</option>)}
 				</select>
 				<IndentTextarea onChange={this.onChangeTextarea} value={model.get('value')} spellCheck={false} onKeyDown={this.onKeyDown} />
 				<button onClick={this.onClick}>
