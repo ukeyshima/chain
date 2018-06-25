@@ -25,17 +25,15 @@ export default class Block extends Component {
 
 		this._prevX = 0;
 		this._prevY = 0;
-		this._editor = null;
+		this._editor = React.createRef();
 		this._canClearMathEditor = true;
 	}
 
 	componentDidMount() {
-		const { props: { model } } = this;
+		const { props: { model }, _editor: { current: $editor } } = this;
 		const type = model.get('type');
 
 		if (type !== BLOCK.TYPE_VIEW) {
-			const $editor = findDOMNode(this).querySelector('[data-handwriting]');
-
 			$editor.addEventListener('exported', this.onExported);
 			MyScript.register($editor, {
 				recognitionParams: {
@@ -52,10 +50,6 @@ export default class Block extends Component {
 					}
 				}
 			});
-
-			const { editor } = $editor;
-
-			this._editor = editor;
 		}
 	}
 
@@ -63,11 +57,11 @@ export default class Block extends Component {
 	onExported(e) {
 		const { props: { model, dispatch }, _canClearMathEditor } = this;
 		const { detail: { exports } } = e;
-
+		
 		if (_canClearMathEditor) {
 			dispatch(actions.updateHandwriting({
 				id: model.get('id'),
-				handwriting: latex2js(exports === undefined ? '' : exports['application/x-latex'] || exports['text/plain'])
+				handwriting: latex2js(exports === undefined ? '' : exports['application/x-latex'] || exports['text/plain'] || '')
 			}));
 		}
 		this._canClearMathEditor = true;
@@ -75,23 +69,23 @@ export default class Block extends Component {
 
 	@autobind
 	clearMathEditor() {
-		const { _editor } = this;
+		const { _editor: { current: { editor } } } = this;
 
-		_editor.clear();
+		editor.clear();
 	}
 
 	@autobind
 	undoMathEditor() {
-		const { _editor } = this;
+		const { _editor: { current: { editor } } } = this;
 
-		_editor.undo();
+		editor.undo();
 	}
 
 	@autobind
 	redoMathEditor() {
-		const { _editor } = this;
+		const { _editor: { current: { editor } } } = this;
 
-		_editor.redo();
+		editor.redo();
 	}
 
 	/**
@@ -99,12 +93,12 @@ export default class Block extends Component {
 	 */
 	@autobind
 	onChange(e) {
-		const { props: { model, dispatch }, _editor } = this;
+		const { props: { model, dispatch }, _editor: { current: { editor } } } = this;
 		const { currentTarget: { value } } = e;
 
 		this._canClearMathEditor = false;
 		dispatch(actions.updateBlock(model.get('id'), { value }));
-		_editor.clear();
+		editor.clear();
 	}
 
 	@autobind
@@ -275,7 +269,7 @@ export default class Block extends Component {
 								);
 							})
 						}
-						<div styleName='math' data-handwriting />
+						<div styleName='math' ref={this._editor} />
 					</div>
 					<div styleName='resizer' onMouseDown={this.onResizeMouseDown} />
 				</div>
