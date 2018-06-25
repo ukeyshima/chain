@@ -56,8 +56,8 @@ export default class Block extends Component {
 	@autobind
 	onExported(e) {
 		const { props: { model, dispatch } } = this;
-		const { detail: { exports } } = e;
-
+		const { detail: { exports } } = e;	
+					
 		dispatch(actions.updateHandwriting({
 			id: model.get('id'),
 			handwriting: latex2js(exports === undefined ? '' : exports['application/x-latex'])
@@ -69,6 +69,20 @@ export default class Block extends Component {
 		const { _editor } = this;
 
 		_editor.clear();
+	}
+
+	@autobind
+	undoMathEditor() {
+		const { _editor } = this;
+
+		_editor.undo();
+	}
+
+	@autobind
+	redoMathEditor() {
+		const { _editor } = this;
+
+		_editor.redo();
 	}
 
 	/**
@@ -187,6 +201,8 @@ export default class Block extends Component {
 						{model.get('changeable') ? <button onClick={this.addPin}>+</button> : null}
 						{model.get('changeable') ? <button onClick={this.deletePin}>-</button> : null}
 						<button onClick={this.clearMathEditor}>Clear</button>
+						<button onClick={this.undoMathEditor}>Undo</button>
+						<button onClick={this.redoMathEditor}>Redo</button>
 					</div>
 					<div data-draggable styleName='math-div'>
 						<input type='text' readOnly={!model.get('editable')} value={model.get('value')} onChange={this.onChange} style={{ borderLeft: `5px solid ${color}` }} />
