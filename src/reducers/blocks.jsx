@@ -70,5 +70,11 @@ export default handleActions({
 
 			return block.set('handwriting', handwriting).set('value', expression);
 		});
+	},
+	[actions.deltaResizeBlock]: (state, action) => {
+		const { payload: { id, dw, dh } } = action;
+		const index = state.findIndex((a) => a.get('id') === id);
+
+		return state.update(index, (block) => block.dresize(dw, dh));
 	}
 }, List());

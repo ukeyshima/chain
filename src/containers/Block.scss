@@ -12,9 +12,9 @@ $block-header-height: 16px;
 	background-color: $black0;
 	box-sizing: border-box;
 	font-family: $font;
-	width: $block-width;
 	display: flex;
 	flex-direction: column;
+	position: relative;
 
 	button {
 		display: inline-block;
@@ -42,7 +42,7 @@ $block-header-height: 16px;
 		color: inherit;
 		height: 100%;
 		box-sizing: border-box;
-		resize: vertical;
+		resize: none;
 		outline: none;
 		display: block;
 		user-select: none;
@@ -52,7 +52,7 @@ $block-header-height: 16px;
 
 .math {
 	background-color: $black1;
-	height: calc(100% - 21px);
+	height: calc(100% - #{$block-header-height} - 5px);
 	width: 100%;
 }
 
@@ -91,6 +91,16 @@ $block-header-height: 16px;
 
 .red {
 	background-color: $red0 !important;
+}
+
+.resizer {
+	background-color: transparent;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 5px;
+	height: 5px;
+	cursor: nwse-resize;
 }
 
 :global .ms-editor .loader {

@@ -18,8 +18,8 @@ export default class Block extends Component {
 	constructor() {
 		super();
 
-		this.prevX = 0;
-		this.prevY = 0;
+		this._prevX = 0;
+		this._prevY = 0;
 		this._editor = null;
 		this._canClearMathEditor = true;
 	}
@@ -120,8 +120,8 @@ export default class Block extends Component {
 		if (_.has(dataset, 'draggable')) {
 			const { pageX, pageY } = getMouseOrFirstTouchPosition(e);
 
-			this.prevX = pageX;
-			this.prevY = pageY;
+			this._prevX = pageX;
+			this._prevY = pageY;
 			document.body.classList.add('cursor-move');
 			document.addEventListener('mousemove', this.onMouseMoveOrTouchMoveDocument);
 			document.addEventListener('mouseup', this.onMouseUpOrTouchEndDocument);
@@ -136,12 +136,12 @@ export default class Block extends Component {
 	@autobind
 	onMouseMoveOrTouchMoveDocument(e) {
 		const { pageX, pageY } = getMouseOrFirstTouchPosition(e);
-		const { props: { model, dispatch }, prevX, prevY } = this;
+		const { props: { model, dispatch }, _prevX, _prevY } = this;
 
 		e.preventDefault();
-		dispatch(actions.deltaMoveBlock(model.get('id'), pageX - prevX, pageY - prevY));
-		this.prevX = pageX;
-		this.prevY = pageY;
+		dispatch(actions.deltaMoveBlock(model.get('id'), pageX - _prevX, pageY - _prevY));
+		this._prevX = pageX;
+		this._prevY = pageY;
 	}
 
 	@autobind
@@ -185,6 +185,44 @@ export default class Block extends Component {
 		}
 	}
 
+	/**
+	 * @param {MouseEvent} e
+	 */
+	@autobind
+	onResizeMouseDown(e) {
+		const { pageX, pageY } = e;
+
+		this._prevX = pageX;
+		this._prevY = pageY;
+		document.body.classList.add('nwse-resize');
+		document.body.addEventListener('mousemove', this.onResizeMouseMoveDoc);
+		document.body.addEventListener('mouseup', this.onResizeMouseUpDoc);
+	}
+
+	/**
+	 * @param {MouseEvent} e
+	 */
+	@autobind
+	onResizeMouseMoveDoc(e) {
+		const { _prevX, _prevY, props: { dispatch, model } } = this;
+		const { pageX, pageY } = e;
+
+		dispatch(actions.deltaResizeBlock({
+			dw: pageX - _prevX,
+			dh: pageY - _prevY,
+			id: model.get('id')
+		}));
+		this._prevX = pageX;
+		this._prevY = pageY;
+	}
+
+	@autobind
+	onResizeMouseUpDoc() {
+		document.body.classList.remove('nwse-resize');
+		document.body.removeEventListener('mousemove', this.onResizeMouseMoveDoc);
+		document.body.removeEventListener('mouseup', this.onResizeMouseUpDoc);
+	}
+
 	render() {
 		const { props: { model } } = this;
 		const color = model.get('color');
@@ -198,6 +236,7 @@ export default class Block extends Component {
 					position: 'absolute',
 					left: model.get('x'),
 					top: model.get('y'),
+					width: model.get('width'),
 					height: model.get('height')
 				}}
 				>
@@ -223,6 +262,7 @@ export default class Block extends Component {
 						}
 						<div styleName='math' data-handwriting />
 					</div>
+					<div styleName='resizer' onMouseDown={this.onResizeMouseDown} />
 				</div>
 			);
 		}
@@ -232,6 +272,7 @@ export default class Block extends Component {
 				position: 'absolute',
 				left: model.get('x'),
 				top: model.get('y'),
+				width: model.get('width'),
 				height: model.get('height')
 			}}
 			>
@@ -243,6 +284,7 @@ export default class Block extends Component {
 				<div data-draggable styleName='textarea-div'>
 					<IndentTextarea readOnly={!model.get('editable')} onChange={this.onChange} value={model.get('value')} spellCheck={false} style={{ borderLeft: `5px solid ${color}` }} onKeyDown={this.onKeyDown} />
 				</div>
+				<div styleName='resizer' onMouseDown={this.onResizeMouseDown} />
 			</div>
 		);
 	}

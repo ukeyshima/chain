@@ -1,8 +1,5 @@
-import _ from 'lodash';
-import vars from '../shared/vars.scss';
-
-const { blockWidth: strblockWidth } = vars;
-export const WIDTH = _.parseInt(strblockWidth);
+export const WIDTH = 200;
+export const HEIGHT = 70;
 export const TYPE_VALUE = 'VALUE';
 export const TYPE_FUNCTION = 'FUNCTION';
 export const TYPE_PROPERTY = 'PROPERTY';

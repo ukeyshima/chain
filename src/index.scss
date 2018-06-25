@@ -23,3 +23,7 @@ body {
 :global .CodeMirror {
 	height: 100%;
 }
+
+:global .nwse-resize {
+	cursor: nwse-resize;
+}
