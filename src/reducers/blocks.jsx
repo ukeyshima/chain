@@ -4,7 +4,6 @@ import { handleActions } from 'redux-actions';
 import actions from '../actions';
 import { BLOCK, PIN, EMPTY_HANDWRITING } from '../constants';
 import colors from '../shared/vars.scss';
-import _ from 'lodash';
 
 const { blue2, white0 } = colors;
 
@@ -69,13 +68,7 @@ export default handleActions({
 				}
 			}
 
-			block = block.set('handwriting', handwriting);
-
-			if (!_.isEqual(handwriting, EMPTY_HANDWRITING)) {
-				block = block.set('value', expression);
-			}
-
-			return block;
+			return block.set('handwriting', handwriting).set('value', expression);
 		});
 	}
 }, List());

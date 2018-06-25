@@ -21,6 +21,7 @@ export default class Block extends Component {
 		this.prevX = 0;
 		this.prevY = 0;
 		this._editor = null;
+		this._canClearMathEditor = true;
 	}
 
 	componentDidMount() {
@@ -55,13 +56,16 @@ export default class Block extends Component {
 
 	@autobind
 	onExported(e) {
-		const { props: { model, dispatch } } = this;
-		const { detail: { exports } } = e;	
-					
-		dispatch(actions.updateHandwriting({
-			id: model.get('id'),
-			handwriting: latex2js(exports === undefined ? '' : exports['application/x-latex'])
-		}));
+		const { props: { model, dispatch }, _canClearMathEditor } = this;
+		const { detail: { exports } } = e;
+
+		if (_canClearMathEditor) {
+			dispatch(actions.updateHandwriting({
+				id: model.get('id'),
+				handwriting: latex2js(exports === undefined ? '' : exports['application/x-latex'])
+			}));
+		}
+		this._canClearMathEditor = true;
 	}
 
 	@autobind
@@ -93,6 +97,7 @@ export default class Block extends Component {
 		const { props: { model, dispatch }, _editor } = this;
 		const { currentTarget: { value } } = e;
 
+		this._canClearMathEditor = false;
 		dispatch(actions.updateBlock(model.get('id'), { value }));
 		_editor.clear();
 	}
