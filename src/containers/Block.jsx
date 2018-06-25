@@ -11,9 +11,12 @@ import MyScript from 'myscript/dist/myscript.min.js';
 import latex2js from '../latex2js';
 import Undo from 'react-icons/lib/fa/mail-reply';
 import Redo from 'react-icons/lib/fa/mail-forward';
+import { TemporaryUserSelectNone } from '../util';
 import './Block.scss';
 
 window.ontouchmove = () => { };
+
+const temporaryUserSelectNone = new TemporaryUserSelectNone();
 
 @connect()
 export default class Block extends Component {
@@ -124,7 +127,8 @@ export default class Block extends Component {
 
 			this._prevX = pageX;
 			this._prevY = pageY;
-			document.body.classList.add('cursor-move');
+			document.body.classList.add('move');
+			temporaryUserSelectNone.search();
 			document.addEventListener('mousemove', this.onMouseMoveOrTouchMoveDocument);
 			document.addEventListener('mouseup', this.onMouseUpOrTouchEndDocument);
 			document.addEventListener('touchmove', this.onMouseMoveOrTouchMoveDocument);
@@ -148,7 +152,8 @@ export default class Block extends Component {
 
 	@autobind
 	onMouseUpOrTouchEndDocument() {
-		document.body.classList.remove('cursor-move');
+		document.body.classList.remove('move');
+		temporaryUserSelectNone.remove();
 		document.removeEventListener('mousemove', this.onMouseMoveOrTouchMoveDocument);
 		document.removeEventListener('mouseup', this.onMouseUpOrTouchEndDocument);
 		document.removeEventListener('touchmove', this.onMouseMoveOrTouchMoveDocument);
@@ -197,6 +202,7 @@ export default class Block extends Component {
 		this._prevX = pageX;
 		this._prevY = pageY;
 		document.body.classList.add('nwse-resize');
+		temporaryUserSelectNone.search();
 		document.body.addEventListener('mousemove', this.onResizeMouseMoveDoc);
 		document.body.addEventListener('mouseup', this.onResizeMouseUpDoc);
 	}
@@ -221,6 +227,7 @@ export default class Block extends Component {
 	@autobind
 	onResizeMouseUpDoc() {
 		document.body.classList.remove('nwse-resize');
+		temporaryUserSelectNone.remove();
 		document.body.removeEventListener('mousemove', this.onResizeMouseMoveDoc);
 		document.body.removeEventListener('mouseup', this.onResizeMouseUpDoc);
 	}

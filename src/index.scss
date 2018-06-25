@@ -8,12 +8,6 @@ main {
 body {
 	margin: 0;
 	font-family: sans-serif;
-
-	&.cursor-move {
-		* {
-			cursor: move;
-		}
-	}
 }
 
 :global .ReactCodeMirror {
@@ -25,5 +19,23 @@ body {
 }
 
 :global .nwse-resize {
-	cursor: nwse-resize;
+	* {
+		cursor: nwse-resize;
+	}
+}
+
+:global .user-select-none {
+	cursor: default;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+}
+
+:global .move {
+	* {
+		cursor: move;
+	}
 }
