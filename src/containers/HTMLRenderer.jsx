@@ -57,6 +57,8 @@ export default class HTMLRenderer extends Component {
 				ret += expression.slice(prev);
 
 				return `(${ret})`;
+			case BLOCK.TYPE_TIMER:
+				return `"TIMER_BLOCK, ${1000 / block.get('value')}"`;
 			default:
 				return '"UNKNOWN_BLOCK"';
 		}

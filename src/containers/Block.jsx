@@ -32,7 +32,7 @@ export default class Block extends Component {
 		const { props: { model }, _editor: { current: $editor } } = this;
 		const type = model.get('type');
 
-		if (type !== BLOCK.TYPE_VIEW) {
+		if ($editor) {
 			$editor.addEventListener('exported', this.onExported);
 			MyScript.register($editor, {
 				recognitionParams: {
@@ -230,7 +230,26 @@ export default class Block extends Component {
 		const color = model.get('color');
 		const type = model.get('type');
 
-		if (type !== BLOCK.TYPE_VIEW) {
+		if (type === BLOCK.TYPE_TIMER) {
+			return (
+				<div data-draggable styleName='base' onMouseDown={this.onMouseDownOrTouchStart} onTouchStart={this.onMouseDownOrTouchStart} style={{
+					position: 'absolute',
+					left: model.get('x'),
+					top: model.get('y'),
+					width: model.get('width'),
+					height: model.get('height')
+				}}
+				>
+					<div data-draggable>
+						{model.get('deletable') ? <button styleName='red' onClick={this.onClickDeleteButton}>x</button> : null}
+						<span>FPS</span>
+					</div>
+					<div data-draggable styleName='textarea-div'>
+						<IndentTextarea readOnly={!model.get('editable')} onChange={this.onChange} value={model.get('value')} spellCheck={false} style={{ borderLeft: `5px solid ${color}` }} onKeyDown={this.onKeyDown} />
+					</div>
+				</div>
+			);
+		} else if (type !== BLOCK.TYPE_VIEW) {
 			const { flattenArgs } = model.get('handwriting');
 
 			return (
