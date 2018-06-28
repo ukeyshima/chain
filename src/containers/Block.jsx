@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import actions from '../actions';
 import autobind from 'autobind-decorator';
@@ -32,7 +32,7 @@ export default class Block extends Component {
 		const { props: { model }, _editor: { current: $editor } } = this;
 		const type = model.get('type');
 
-		if (type !== BLOCK.TYPE_VIEW) {
+		if ($editor) {
 			$editor.addEventListener('exported', this.onExported);
 			MyScript.register($editor, {
 				recognitionParams: {
@@ -92,12 +92,17 @@ export default class Block extends Component {
 	 */
 	@autobind
 	onChange(e) {
-		const { props: { model, dispatch }, _editor: { current: { editor } } } = this;
+		const { props: { model, dispatch }, _editor: { current: $editor } } = this;
 		const { currentTarget: { value } } = e;
 
 		this._canClearMathEditor = false;
 		dispatch(actions.updateBlock(model.get('id'), { value }));
-		editor.clear();
+
+		if ($editor) {
+			const { editor } = $editor;
+
+			editor.clear();
+		}
 	}
 
 	@autobind
@@ -229,33 +234,41 @@ export default class Block extends Component {
 		const { props: { model } } = this;
 		const color = model.get('color');
 		const type = model.get('type');
+		const { flattenArgs } = model.get('handwriting');
 
-		if (type !== BLOCK.TYPE_VIEW) {
-			const { flattenArgs } = model.get('handwriting');
-
-			return (
-				<div data-draggable styleName='base' onMouseDown={this.onMouseDownOrTouchStart} onTouchStart={this.onMouseDownOrTouchStart} style={{
-					position: 'absolute',
-					left: model.get('x'),
-					top: model.get('y'),
-					width: model.get('width'),
-					height: model.get('height')
-				}}
-				>
-					<div data-draggable>
-						{model.get('deletable') ? <button styleName='red' onClick={this.onClickDeleteButton}>x</button> : null}
-						{model.get('changeable') ? <button onClick={this.addPin}>+</button> : null}
-						{model.get('changeable') ? <button onClick={this.deletePin}>-</button> : null}
-						<button onClick={this.clearMathEditor}>
-							Clear
-						</button>
-						<button onClick={this.undoMathEditor}>
-							<Undo />
-						</button>
-						<button onClick={this.redoMathEditor}>
-							<Redo />
-						</button>
-					</div>
+		return (
+			<div data-draggable styleName='base' onMouseDown={this.onMouseDownOrTouchStart} onTouchStart={this.onMouseDownOrTouchStart} style={{
+				position: 'absolute',
+				left: model.get('x'),
+				top: model.get('y'),
+				width: model.get('width'),
+				height: model.get('height')
+			}}
+			>
+				<div data-draggable>
+					{model.get('deletable') ? <button styleName='red' onClick={this.onClickDeleteButton}>x</button> : null}
+					{model.get('changeable') ? (
+						<Fragment>
+							<button onClick={this.addPin}>+</button>
+							<button onClick={this.deletePin}>-</button>
+						</Fragment>
+					) : null}
+					{type === BLOCK.TYPE_TIMER ? <div styleName='tag'>FPS</div> : null}
+					{_.includes(BLOCK.CREATABLE_BLOCK_LIST, type) ? (
+						<Fragment>
+							<button onClick={this.clearMathEditor}>
+								Clear
+							</button>
+							<button onClick={this.undoMathEditor}>
+								<Undo />
+							</button>
+							<button onClick={this.redoMathEditor}>
+								<Redo />
+							</button>
+						</Fragment>
+					) : null}
+				</div>
+				{_.includes(BLOCK.CREATABLE_BLOCK_LIST, type) ? (
 					<div data-draggable styleName='math-div'>
 						<input type='text' readOnly={!model.get('editable')} value={model.get('value')} onChange={this.onChange} style={{ borderLeft: `5px solid ${color}` }} />
 						{
@@ -270,29 +283,12 @@ export default class Block extends Component {
 						}
 						<div styleName='math' ref={this._editor} />
 					</div>
-					<div styleName='resizer' onMouseDown={this.onResizeMouseDown} />
-				</div>
-			);
-		}
-
-		return (
-			<div data-draggable styleName='base' onMouseDown={this.onMouseDownOrTouchStart} onTouchStart={this.onMouseDownOrTouchStart} style={{
-				position: 'absolute',
-				left: model.get('x'),
-				top: model.get('y'),
-				width: model.get('width'),
-				height: model.get('height')
-			}}
-			>
-				<div data-draggable>
-					{model.get('deletable') ? <button styleName='red' onClick={this.onClickDeleteButton}>x</button> : null}
-					{model.get('changeable') ? <button onClick={this.addPin}>+</button> : null}
-					{model.get('changeable') ? <button onClick={this.deletePin}>-</button> : null}
-				</div>
-				<div data-draggable styleName='textarea-div'>
-					<IndentTextarea readOnly={!model.get('editable')} onChange={this.onChange} value={model.get('value')} spellCheck={false} style={{ borderLeft: `5px solid ${color}` }} onKeyDown={this.onKeyDown} />
-				</div>
-				<div styleName='resizer' onMouseDown={this.onResizeMouseDown} />
+				) : (
+						<div data-draggable styleName='textarea-div'>
+							<IndentTextarea readOnly={!model.get('editable')} onChange={this.onChange} value={model.get('value')} spellCheck={false} style={{ borderLeft: `5px solid ${color}` }} onKeyDown={this.onKeyDown} />
+						</div>
+					)
+				}
 			</div>
 		);
 	}

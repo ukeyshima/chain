@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { BLOCK } from '../constants';
+import Immutable from 'immutable';
 import './HTMLRenderer.scss';
 
 const parser = new DOMParser();
@@ -14,6 +15,19 @@ const parser = new DOMParser();
 	})
 )
 export default class HTMLRenderer extends Component {
+	constructor() {
+		super();
+
+		this._vars = [];
+	}
+
+	shouldComponentUpdate(nextProps) {
+		const { props: { blocks, links, html } } = this;
+		const { blocks: nextBlocks, links: nextLinks, html: nextHtml } = nextProps;
+
+		return !Immutable.is(blocks.slice(1), nextBlocks.slice(1)) || !Immutable.is(links, nextLinks) || !Immutable.is(html, nextHtml);
+	}
+
 	toEvalableString() {
 		const { props: { blocks } } = this;
 		const first = blocks.first();
@@ -32,7 +46,18 @@ export default class HTMLRenderer extends Component {
 
 		switch (block.get('type')) {
 			case BLOCK.TYPE_VIEW:
-				return args;
+				return _.map(args, (arg) => {
+					const matched = arg.match(/_timer_variable_\d+_(.*?)_/);
+
+					if (matched) {
+						return `setInterval(() => {
+							${arg}
+							${matched[0]} += 1;
+						}, 1000 / ${matched[1]})`;
+					}
+
+					return arg;
+				});
 			case BLOCK.TYPE_VALUE:
 				return block.get('value');
 			case BLOCK.TYPE_FUNCTION:
@@ -57,6 +82,10 @@ export default class HTMLRenderer extends Component {
 				ret += expression.slice(prev);
 
 				return `(${ret})`;
+			case BLOCK.TYPE_TIMER:
+				const chainVar = `_timer_variable_${Date.now()}_${block.get('value')}_`;
+				this._vars.push(chainVar);
+				return chainVar;
 			default:
 				return '"UNKNOWN_BLOCK"';
 		}
@@ -79,12 +108,15 @@ export default class HTMLRenderer extends Component {
 	}
 
 	render() {
-		const { props: { html } } = this;
+		this._vars = [];
+
+		const { props: { html }, _vars } = this;
 		const $doc = parser.parseFromString(html, 'text/html');
 		const $body = $doc.querySelector('body');
 		const $script = document.createElement('script');
 		const script = _.join(_.map(this.toEvalableString(), (a) => `parent.postMessage({ type: 'chain-result', value: ${a} }, '*')`), '\n');
 		$script.innerHTML = `
+			${_.join(_.map(_vars, (a) => `let ${a} = 0;`), '\n')}
 			parent.postMessage({ type: 'chain-clear' }, '*');
 			try {
 				(0, eval)(${JSON.stringify(script)});

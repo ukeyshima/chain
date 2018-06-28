@@ -39,12 +39,36 @@ export default class Chain extends Component {
 		}
 	}
 
+	/**
+	 * @returns {boolean}
+	 */
+	static get _isFrontmost() {
+		const { location: { hash } } = document;
+
+		return hash === '#/chain';
+	}
+
+	constructor() {
+		super();
+
+		this.state = { frontmost: Chain._isFrontmost };
+		window.addEventListener('hashchange', this.onHashChange);
+	}
+
 	componentDidMount() {
 		window.addEventListener('message', this.onMessage);
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener('message', this.onMessage);
+	}
+
+	/**
+	 * @param {HashEvent} e
+	 */
+	@autobind
+	onHashChange() {
+		this.setState({ frontmost: Chain._isFrontmost });
 	}
 
 	/**
@@ -149,11 +173,14 @@ export default class Chain extends Component {
 	}
 
 	render() {
-		const { props: { link, links, blockCreator } } = this;
+		const { props: { link, links, blockCreator }, state: { frontmost } } = this;
 		let { props: { blocks } } = this;
 
 		return (
-			<div styleName='base'>
+			<div styleName='base' style={{
+				visibility: frontmost ? 'visible' : 'hidden'
+			}}
+			>
 				<svg onMouseDown={this.onMouseDownOrTouchStart} onTouchStart={this.onMouseDownOrTouchStart}>
 					{links.map((a, i) => {
 						_.forEach(['input', 'output'], (key) => {

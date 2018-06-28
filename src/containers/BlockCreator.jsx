@@ -8,8 +8,7 @@ import { batchActions } from 'redux-batched-actions';
 import autobind from 'autobind-decorator';
 import './BlockCreator.scss';
 
-const OPTION_LIST = [BLOCK.TYPE_VALUE, BLOCK.TYPE_FUNCTION, BLOCK.TYPE_PROPERTY, BLOCK.TYPE_OPERATOR, BLOCK.TYPE_MATH];
-const OPTION_NAME_LIST = _.map(OPTION_LIST, (a) => `${_.capitalize(a)} Block`);
+const OPTION_NAME_LIST = _.map(BLOCK.CREATABLE_BLOCK_LIST, (a) => `${_.capitalize(a)} Block`);
 
 @connect()
 export default class BlockCreator extends Component {
@@ -73,7 +72,7 @@ export default class BlockCreator extends Component {
 			}}
 			>
 				<select value={model.get('selected')} onChange={this.onChangeSelect}>
-					{_.map(OPTION_LIST, (a, i) => <option value={a} key={i}>{OPTION_NAME_LIST[i]}</option>)}
+					{_.map(BLOCK.CREATABLE_BLOCK_LIST, (a, i) => <option value={a} key={i}>{OPTION_NAME_LIST[i]}</option>)}
 				</select>
 				<button onClick={this.onClick}>
 					ADD

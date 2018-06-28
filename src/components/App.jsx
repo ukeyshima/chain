@@ -15,11 +15,20 @@ import styles from './App.scss';
 const { link, active } = styles;
 const store = createStore(enableBatching(state));
 
-store.dispatch(actions.addBlock({ x: 100, y: 100, type: BLOCK.TYPE_VIEW }));
+store.dispatch(actions.addBlock({
+	x: innerWidth / 2 + 50,
+	y: (innerHeight - BLOCK.HEIGHT) / 2,
+	type: BLOCK.TYPE_VIEW
+}));
+store.dispatch(actions.addBlock({
+	x: innerWidth / 2 - BLOCK.WIDTH - 50,
+	y: (innerHeight - BLOCK.HEIGHT) / 2,
+	type: BLOCK.TYPE_TIMER
+}));
 
 const redirectRender = () => <Redirect to='/chain' />;
 
-class App extends Component {
+class App extends Component {	
 	render() {
 		return (
 			<Provider store={store}>
@@ -27,8 +36,8 @@ class App extends Component {
 					<div styleName='wrap'>
 						<div styleName='base'>
 							<HTMLRenderer />
+							<Chain />
 							<Route exact path='/' render={redirectRender} />
-							<Route path='/chain' component={Chain} />
 							<Route path='/editor' component={HTMLEditor} />
 						</div>
 						<footer>

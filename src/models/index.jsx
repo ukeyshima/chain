@@ -16,6 +16,7 @@ export class Block extends Record({
 	height: BLOCK.HEIGHT,
 	deletable: true,
 	editable: true,
+	resizable: true,
 	type: '',
 	color: white0,
 	changeable: true,
@@ -73,6 +74,15 @@ export class Block extends Record({
 					outputPins: this._createPins([white0], PIN.TYPE_OUTPUT)
 				};
 				break;
+			case BLOCK.TYPE_TIMER:
+				options = {
+					changeable: false,
+					deletable: false,
+					resizable: false,
+					outputPins: this._createPins([white0], PIN.TYPE_OUTPUT),
+					value: 60
+				};
+				break;
 			default:
 				throw new Error(`Unknown type: ${type}.`);
 		}
@@ -84,7 +94,7 @@ export class Block extends Record({
 		const { type, height, inputPins: { size: size0 }, outputPins: { size: size1 } } = this;
 		let h = Math.max(height, Math.max(4, size0 + 2, size1 + 2) * (PIN.WIDTH * 2 + 1) - 1);
 
-		if (type !== BLOCK.TYPE_VIEW) {
+		if (type !== BLOCK.TYPE_VIEW && type !== BLOCK.TYPE_TIMER) {
 			h = Math.max(MIN_HEIGHT_OTHER_THAN_VIEW, h);
 		}
 
