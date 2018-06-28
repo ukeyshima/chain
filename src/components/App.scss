@@ -21,8 +21,15 @@ body {
 }
 
 .base {
+	position: relative;
 	width: 100%;
 	height: calc(100% - #{$footer-height});
+
+	> * {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	}
 }
 
 .link {

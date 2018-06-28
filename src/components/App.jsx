@@ -28,7 +28,7 @@ store.dispatch(actions.addBlock({
 
 const redirectRender = () => <Redirect to='/chain' />;
 
-class App extends Component {
+class App extends Component {	
 	render() {
 		return (
 			<Provider store={store}>
@@ -36,8 +36,8 @@ class App extends Component {
 					<div styleName='wrap'>
 						<div styleName='base'>
 							<HTMLRenderer />
+							<Chain />
 							<Route exact path='/' render={redirectRender} />
-							<Route path='/chain' component={Chain} />
 							<Route path='/editor' component={HTMLEditor} />
 						</div>
 						<footer>

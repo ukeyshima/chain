@@ -92,12 +92,17 @@ export default class Block extends Component {
 	 */
 	@autobind
 	onChange(e) {
-		const { props: { model, dispatch }, _editor: { current: { editor } } } = this;
+		const { props: { model, dispatch }, _editor: { current: $editor } } = this;
 		const { currentTarget: { value } } = e;
 
 		this._canClearMathEditor = false;
 		dispatch(actions.updateBlock(model.get('id'), { value }));
-		editor.clear();
+
+		if ($editor) {
+			const { editor } = $editor;
+
+			editor.clear();
+		}
 	}
 
 	@autobind

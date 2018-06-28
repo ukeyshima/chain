@@ -78,7 +78,6 @@ export class Block extends Record({
 				options = {
 					changeable: false,
 					deletable: false,
-					editable: false,
 					resizable: false,
 					outputPins: this._createPins([white0], PIN.TYPE_OUTPUT),
 					value: 60
