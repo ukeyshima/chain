@@ -77,11 +77,12 @@ export class Block extends Record({
 			case BLOCK.TYPE_TIMER:
 				options = {
 					changeable: false,
+					deletable: false,
 					editable: false,
 					resizable: false,
 					outputPins: this._createPins([white0], PIN.TYPE_OUTPUT),
 					value: 60
-				}
+				};
 				break;
 			default:
 				throw new Error(`Unknown type: ${type}.`);

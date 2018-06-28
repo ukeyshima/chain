@@ -242,7 +242,7 @@ export default class Block extends Component {
 				>
 					<div data-draggable>
 						{model.get('deletable') ? <button styleName='red' onClick={this.onClickDeleteButton}>x</button> : null}
-						<span>FPS</span>
+						<div styleName='tag'>FPS</div>
 					</div>
 					<div data-draggable styleName='textarea-div'>
 						<IndentTextarea readOnly={!model.get('editable')} onChange={this.onChange} value={model.get('value')} spellCheck={false} style={{ borderLeft: `5px solid ${color}` }} onKeyDown={this.onKeyDown} />
