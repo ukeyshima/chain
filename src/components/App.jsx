@@ -15,7 +15,16 @@ import styles from './App.scss';
 const { link, active } = styles;
 const store = createStore(enableBatching(state));
 
-store.dispatch(actions.addBlock({ x: 100, y: 100, type: BLOCK.TYPE_VIEW }));
+store.dispatch(actions.addBlock({
+	x: innerWidth / 2 + 50,
+	y: (innerHeight - BLOCK.HEIGHT) / 2,
+	type: BLOCK.TYPE_VIEW
+}));
+store.dispatch(actions.addBlock({
+	x: innerWidth / 2 - BLOCK.WIDTH - 50,
+	y: (innerHeight - BLOCK.HEIGHT) / 2,
+	type: BLOCK.TYPE_TIMER
+}));
 
 const redirectRender = () => <Redirect to='/chain' />;
 

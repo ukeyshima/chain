@@ -13,6 +13,5 @@ export const CREATABLE_BLOCK_LIST = [
     TYPE_PROPERTY,
     TYPE_OPERATOR,
     TYPE_VIEW,
-    TYPE_MATH,
-    TYPE_TIMER
+    TYPE_MATH
 ];
