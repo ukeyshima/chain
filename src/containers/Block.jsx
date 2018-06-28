@@ -289,6 +289,7 @@ export default class Block extends Component {
 						</div>
 					)
 				}
+				{model.get('resizable') ? <div styleName='resizer' onMouseDown={this.onResizeMouseDown} /> : null}
 			</div>
 		);
 	}
