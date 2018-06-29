@@ -76,30 +76,3 @@ export const generator = new (class IDGenerator {
 		return _.parseInt(`${a}${b}`, 2);
 	}
 });
-
-export class TemporaryUserSelectNone {
-	constructor() {
-		this._all = [];
-	}
-
-	search($start = document) {
-		this._all = [
-			...$start.querySelectorAll('textarea'),
-			...$start.querySelectorAll('input')
-		];
-
-		this.add();
-	}
-
-	add() {
-		const { _all } = this;
-
-		_.map(_all, (a) => a.classList.add('user-select-none'));
-	}
-
-	remove() {
-		const { _all } = this;
-
-		_.map(_all, (a) => a.classList.remove('user-select-none'));
-	}
-}

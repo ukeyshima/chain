@@ -71,10 +71,10 @@ export default handleActions({
 			return block.set('handwriting', handwriting).set('value', expression);
 		});
 	},
-	[actions.deltaResizeBlock]: (state, action) => {
-		const { payload: { id, dw, dh } } = action;
+	[actions.resizeBlock]: (state, action) => {
+		const { payload: { id, width, height } } = action;
 		const index = state.findIndex((a) => a.get('id') === id);
 
-		return state.update(index, (block) => block.dresize(dw, dh));
+		return state.update(index, (block) => block.resize(width, height));
 	}
 }, List());

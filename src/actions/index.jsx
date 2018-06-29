@@ -22,5 +22,5 @@ export default createActions(
 	'PUSH_VIEW_BLOCK',
 	'SHOW_BLOCK_CREATOR',
 	'UPDATE_HANDWRITING',
-	'DELTA_RESIZE_BLOCK'
+	'RESIZE_BLOCK'
 );

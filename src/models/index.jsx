@@ -132,15 +132,15 @@ export class Block extends Record({
 	}
 
 	/**
-	 * @param {number} dw
-	 * @param {number} dh
+	 * @param {number} width
+	 * @param {number} height
 	 */
-	dresize(dw, dh) {
-		const { type, width, height } = this;
+	resize(width, height) {
+		const { type } = this;
 
 		return this.merge({
-			width: Math.max(BLOCK.WIDTH, width + dw),
-			height: Math.max(type !== BLOCK.TYPE_VIEW ? MIN_HEIGHT_OTHER_THAN_VIEW : BLOCK.HEIGHT, height + dh)
+			width: Math.max(BLOCK.WIDTH, width),
+			height: Math.max(type !== BLOCK.TYPE_VIEW ? MIN_HEIGHT_OTHER_THAN_VIEW : BLOCK.HEIGHT, height)
 		}).recalculatePinPosition();
 	}
 

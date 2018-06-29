@@ -10,13 +10,11 @@ import MyScript from 'myscript/dist/myscript.min.js';
 import latex2js from '../latex2js';
 import Undo from 'react-icons/lib/fa/mail-reply';
 import Redo from 'react-icons/lib/fa/mail-forward';
-import { TemporaryUserSelectNone } from '../util';
 import styles from './Block.scss';
 
 window.ontouchmove = () => { };
 
 const { white1 } = styles;
-const temporaryUserSelectNone = new TemporaryUserSelectNone();
 
 @connect()
 export default class Block extends Component {
@@ -25,6 +23,10 @@ export default class Block extends Component {
 
 		this._prevX = 0;
 		this._prevY = 0;
+		this._startX = 0;
+		this._startY = 0;
+		this._startWidth = 0;
+		this._startHeight = 0;
 		this._editor = React.createRef();
 		this._canClearMathEditor = true;
 	}
@@ -136,7 +138,6 @@ export default class Block extends Component {
 			this._prevX = pageX;
 			this._prevY = pageY;
 			document.body.classList.add('move');
-			temporaryUserSelectNone.search();
 			document.addEventListener('mousemove', this.onMouseMoveOrTouchMoveDocument);
 			document.addEventListener('mouseup', this.onMouseUpOrTouchEndDocument);
 			document.addEventListener('touchmove', this.onMouseMoveOrTouchMoveDocument);
@@ -161,7 +162,6 @@ export default class Block extends Component {
 	@autobind
 	onMouseUpOrTouchEndDocument() {
 		document.body.classList.remove('move');
-		temporaryUserSelectNone.remove();
 		document.removeEventListener('mousemove', this.onMouseMoveOrTouchMoveDocument);
 		document.removeEventListener('mouseup', this.onMouseUpOrTouchEndDocument);
 		document.removeEventListener('touchmove', this.onMouseMoveOrTouchMoveDocument);
@@ -205,12 +205,14 @@ export default class Block extends Component {
 	 */
 	@autobind
 	onResizeMouseDown(e) {
+		const { props: { model } } = this;
 		const { pageX, pageY } = e;
 
-		this._prevX = pageX;
-		this._prevY = pageY;
+		this._startX = pageX;
+		this._startY = pageY;
+		this._startWidth = model.get('width');
+		this._startHeight = model.get('height');
 		document.body.classList.add('nwse-resize');
-		temporaryUserSelectNone.search();
 		document.body.addEventListener('mousemove', this.onResizeMouseMoveDoc);
 		document.body.addEventListener('mouseup', this.onResizeMouseUpDoc);
 	}
@@ -220,12 +222,15 @@ export default class Block extends Component {
 	 */
 	@autobind
 	onResizeMouseMoveDoc(e) {
-		const { _prevX, _prevY, props: { dispatch, model }, _editor: { current: $editor } } = this;
+		const {
+			_startX, _startY, _startWidth, _startHeight, _editor: { current: $editor },
+			props: { dispatch, model }
+		} = this;
 		const { pageX, pageY } = e;
 
-		dispatch(actions.deltaResizeBlock({
-			dw: pageX - _prevX,
-			dh: pageY - _prevY,
+		dispatch(actions.resizeBlock({
+			width: _startWidth + (pageX - _startX),
+			height: _startHeight + (pageY - _startY),
 			id: model.get('id')
 		}));
 
@@ -234,15 +239,11 @@ export default class Block extends Component {
 
 			editor.resize();
 		}
-
-		this._prevX = pageX;
-		this._prevY = pageY;
 	}
 
 	@autobind
 	onResizeMouseUpDoc() {
 		document.body.classList.remove('nwse-resize');
-		temporaryUserSelectNone.remove();
 		document.body.removeEventListener('mousemove', this.onResizeMouseMoveDoc);
 		document.body.removeEventListener('mouseup', this.onResizeMouseUpDoc);
 	}
