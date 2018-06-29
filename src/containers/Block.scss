@@ -123,4 +123,14 @@ $block-header-height: 16px;
 	stroke: $white0;
 }
 
+:global .smartguide {
+	display: none;
+}
+
+:global #BACKGROUND-guides {
+	* {
+		stroke: none;
+	}
+}
+
 @value white1 #{$white1};
