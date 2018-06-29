@@ -11,10 +11,11 @@ import latex2js from '../latex2js';
 import Undo from 'react-icons/lib/fa/mail-reply';
 import Redo from 'react-icons/lib/fa/mail-forward';
 import { TemporaryUserSelectNone } from '../util';
-import './Block.scss';
+import styles from './Block.scss';
 
 window.ontouchmove = () => { };
 
+const { white1 } = styles;
 const temporaryUserSelectNone = new TemporaryUserSelectNone();
 
 @connect()
@@ -34,21 +35,30 @@ export default class Block extends Component {
 
 		if ($editor) {
 			$editor.addEventListener('exported', this.onExported);
-			MyScript.register($editor, {
-				recognitionParams: {
-					type: type === BLOCK.TYPE_MATH || type === BLOCK.TYPE_VALUE || type === BLOCK.TYPE_OPERATOR ? 'MATH' : 'TEXT',
-					apiVersion: 'V4',
-					server: {
-						applicationKey: '331b4bdf-7ace-4265-94f1-b01504c78743',
-						hmacKey: '44f4f4ce-fd0f-48a1-b517-65d2b9465413'
-					},
-					v4: {
-						math: {
-							mimeTypes: ['application/x-latex']
+			MyScript.register($editor,
+				{
+					recognitionParams: {
+						type: type === BLOCK.TYPE_MATH || type === BLOCK.TYPE_VALUE || type === BLOCK.TYPE_OPERATOR ? 'MATH' : 'TEXT',
+						apiVersion: 'V4',
+						server: {
+							applicationKey: '331b4bdf-7ace-4265-94f1-b01504c78743',
+							hmacKey: '44f4f4ce-fd0f-48a1-b517-65d2b9465413'
+						},
+						v4: {
+							math: {
+								mimeTypes: ['application/x-latex']
+							}
 						}
 					}
+				},
+				{
+				},
+				{
+					ink: {
+						color: white1
+					}
 				}
-			});
+			);
 		}
 	}
 

@@ -119,12 +119,8 @@ $block-header-height: 16px;
 	left: calc(50% - 65px) !important;
 }
 
-:global #pendingStrokes {
-	* {
-		color: red !important;
-	}
-}
-
 :global #MODEL-viewTransform {
 	stroke: $white0;
 }
+
+@value white1 #{$white1};

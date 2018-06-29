@@ -1,7 +1,8 @@
 $black0: rgb(30, 30, 30);
 $black1: lighten($black0, 5%);
 $white0: rgb(212, 212, 212);
-$white1: darken($white0, 50%);
+$white1: darken($white0, 5%);
+$dwhite0: darken($white0, 50%);
 $red0: rgb(244, 67, 54);
 $purple0: rgb(197, 134, 192);
 $blue0: rgb(0, 122, 204);
