@@ -210,7 +210,7 @@ export default class Block extends Component {
 	 */
 	@autobind
 	onResizeMouseMoveDoc(e) {
-		const { _prevX, _prevY, props: { dispatch, model } } = this;
+		const { _prevX, _prevY, props: { dispatch, model }, _editor: { current: $editor } } = this;
 		const { pageX, pageY } = e;
 
 		dispatch(actions.deltaResizeBlock({
@@ -218,6 +218,13 @@ export default class Block extends Component {
 			dh: pageY - _prevY,
 			id: model.get('id')
 		}));
+
+		if ($editor) {
+			const { editor } = $editor;
+
+			editor.resize();
+		}
+
 		this._prevX = pageX;
 		this._prevY = pageY;
 	}
