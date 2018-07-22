@@ -104,7 +104,6 @@ export default class Chain extends Component {
 		const { props: { dispatch } } = this;
 		const { clientX, clientY } = getMouseOrFirstTouchPosition(e);
 
-		e.preventDefault();
 		dispatch(actions.endPointLink({ x: clientX, y: clientY }));
 	}
 
@@ -121,16 +120,16 @@ export default class Chain extends Component {
 
 	/**
 	 * @param {MouseEvent} e
-	 * @param {any} pin
-	 * @param {number} block1
+	 * @param {Object} pinProps
+	 * @param {number} pin.index
+	 * @param {string} pin.type
 	 */
 	@autobind
-	onConnectPin(e, pin, block1) {
+	onConnectPin(e, pinProps) {
 		const { __connection__: { block: block0, pin: pin0, pinType: pinType0 } } = window;
 		const { props: { dispatch } } = this;
-		const pin1 = pin.get('index');
-		const pinType1 = pin.get('type');
-
+		const { index: pin1, type: pinType1, parent: block1 } = pinProps;
+		
 		if (block0 !== block1 && pinType0 !== pinType1) {
 			dispatch(actions.addPinLink({
 				[Chain.convertPinTypeToPinLinkKey(pinType0)]: { block: block0, pin: pin0 },

@@ -11,6 +11,7 @@ module.exports = (env, { mode }) => {
 	const babelPlugins = [
 		'transform-decorators-legacy',
 		'lodash',
+		['transform-object-rest-spread', { useBuiltIns: true }],
 		['react-css-modules',
 			{
 				context,

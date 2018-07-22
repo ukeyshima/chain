@@ -138,9 +138,9 @@ export default class Block extends Component {
 			this._prevX = pageX;
 			this._prevY = pageY;
 			document.body.classList.add('move');
-			document.addEventListener('mousemove', this.onMouseMoveOrTouchMoveDocument);
+			document.addEventListener('mousemove', this.onMouseMoveOrTouchMoveDocument, { passive: true });
 			document.addEventListener('mouseup', this.onMouseUpOrTouchEndDocument);
-			document.addEventListener('touchmove', this.onMouseMoveOrTouchMoveDocument);
+			document.addEventListener('touchmove', this.onMouseMoveOrTouchMoveDocument, { passive: true });
 			document.addEventListener('touchend', this.onMouseUpOrTouchEndDocument);
 		}
 	}
@@ -153,7 +153,6 @@ export default class Block extends Component {
 		const { pageX, pageY } = getMouseOrFirstTouchPosition(e);
 		const { props: { model, dispatch }, _prevX, _prevY } = this;
 
-		e.preventDefault();
 		dispatch(actions.deltaMoveBlock(model.get('id'), pageX - _prevX, pageY - _prevY));
 		this._prevX = pageX;
 		this._prevY = pageY;
@@ -204,29 +203,31 @@ export default class Block extends Component {
 	 * @param {MouseEvent} e
 	 */
 	@autobind
-	onResizeMouseDown(e) {
+	onResizeMouseDownOrTouchStart(e) {
 		const { props: { model } } = this;
-		const { pageX, pageY } = e;
+		const { pageX, pageY } = getMouseOrFirstTouchPosition(e);
 
 		this._startX = pageX;
 		this._startY = pageY;
 		this._startWidth = model.get('width');
 		this._startHeight = model.get('height');
 		document.body.classList.add('nwse-resize');
-		document.body.addEventListener('mousemove', this.onResizeMouseMoveDoc);
+		document.body.addEventListener('mousemove', this.onResizeMouseMoveOrTouchMoveDoc);
+		document.body.addEventListener('touchmove', this.onResizeMouseMoveOrTouchMoveDoc);
 		document.body.addEventListener('mouseup', this.onResizeMouseUpDoc);
+		document.body.addEventListener('touchend', this.onResizeMouseUpDoc);
 	}
 
 	/**
 	 * @param {MouseEvent} e
 	 */
 	@autobind
-	onResizeMouseMoveDoc(e) {
+	onResizeMouseMoveOrTouchMoveDoc(e) {
 		const {
 			_startX, _startY, _startWidth, _startHeight, _editor: { current: $editor },
 			props: { dispatch, model }
 		} = this;
-		const { pageX, pageY } = e;
+		const { pageX, pageY } = getMouseOrFirstTouchPosition(e);
 
 		dispatch(actions.resizeBlock({
 			width: _startWidth + (pageX - _startX),
@@ -244,8 +245,10 @@ export default class Block extends Component {
 	@autobind
 	onResizeMouseUpDoc() {
 		document.body.classList.remove('nwse-resize');
-		document.body.removeEventListener('mousemove', this.onResizeMouseMoveDoc);
+		document.body.removeEventListener('mousemove', this.onResizeMouseMoveOrTouchMoveDoc);
+		document.body.removeEventListener('touchmove', this.onResizeMouseMoveOrTouchMoveDoc);
 		document.body.removeEventListener('mouseup', this.onResizeMouseUpDoc);
+		document.body.removeEventListener('touchend', this.onResizeMouseUpDoc);
 	}
 
 	render() {
@@ -307,7 +310,7 @@ export default class Block extends Component {
 						</div>
 					)
 				}
-				{model.get('resizable') ? <div styleName='resizer' onMouseDown={this.onResizeMouseDown} /> : null}
+				{model.get('resizable') ? <div styleName='resizer' onMouseDown={this.onResizeMouseDownOrTouchStart} onTouchStart={this.onResizeMouseDownOrTouchStart} /> : null}
 			</div>
 		);
 	}

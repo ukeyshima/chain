@@ -54,17 +54,15 @@ export default class Pin extends Component {
 		_.some(document.querySelectorAll('[data-pin]'), ($e) => {
 			const { left, top, width, height } = $e.getBoundingClientRect();
 			if (left <= pageX && pageX <= left + width && top <= pageY && pageY <= top + height) {
-				_.some(_.keys($e), (key) => {
+				return _.some(_.keys($e), (key) => {
 					if (_.startsWith(key, '__reactInternalInstance$')) {
-						const {
-							_currentElement: { _owner: { _currentElement: { props: { model, onMouseUpOrTouchEnd, parent } } } }
-						} = $e[key];
-						onMouseUpOrTouchEnd(e, model, parent);
+						const { memoizedProps: { _touchprops_: { onMouseUpOrTouchEnd, ...rest } } } = $e[key];
+
+						onMouseUpOrTouchEnd(e, rest);
 						return true;
 					}
 					return false;
 				});
-				return true;
 			}
 
 			return false;
@@ -79,13 +77,19 @@ export default class Pin extends Component {
 	}
 
 	render() {
-		const { props: { model }, state: { enter, connecting } } = this;
+		const { props: { model, onMouseUpOrTouchEnd, parent }, state: { enter, connecting } } = this;
 		const color = model.get('color');
 		const type = model.get('type');
 
 		return (
 			<svg
 				data-pin
+				_touchprops_={{
+					type: model.get('type'),
+					index: model.get('index'),
+					parent,
+					onMouseUpOrTouchEnd
+				}}
 				onMouseDown={this.onMouseDownOrTouchStart}
 				onTouchStart={this.onMouseDownOrTouchStart}
 				onMouseUp={this.onMouseup}
