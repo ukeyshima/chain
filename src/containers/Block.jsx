@@ -12,8 +12,6 @@ import Undo from 'react-icons/lib/fa/mail-reply';
 import Redo from 'react-icons/lib/fa/mail-forward';
 import styles from './Block.scss';
 
-window.ontouchmove = () => { };
-
 const { white1 } = styles;
 
 @connect()

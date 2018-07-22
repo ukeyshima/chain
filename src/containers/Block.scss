@@ -30,6 +30,7 @@ $block-header-height: 16px;
 	display: flex;
 	flex-direction: column;
 	position: relative;
+	touch-action: none;
 
 	button {
 		@extend .tag-base;
